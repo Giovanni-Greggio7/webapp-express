@@ -1,7 +1,7 @@
-import connection from "../data/movie_db";
+import connection from "../data/movie_db.js";
 
 function index(req, res) {
-    const sql = 'SELECT * FROM movie';
+    const sql = 'SELECT * FROM movies';
 
     connection.query(sql, (err, results) => {
         if (err)
@@ -10,14 +10,14 @@ function index(req, res) {
             })
             res.json(results)
 
-            const movies = results.map((book) => { 👈
-              return {
-                ...movie,
-                image: req.imagePath + book.image,
-              };
+            // const movies = results.map((book) => {
+            //   return {
+            //     ...movie,
+            //     image: req.imagePath + book.image,
+            //   };
             });
-    })
-}
+    }
+
 
 function show(req, res) {
     const { id } = req.params;
@@ -47,10 +47,10 @@ function show(req, res) {
         
               movie.reviews = reviewsResults;
 
-              res.json({ 
-                ...movie,
-                image: req.imagePath + movie.image,
-              });
+              // res.json({ 
+              //   ...movie,
+              //   image: req.imagePath + movie.image,
+              // });
 
               res.json(movie);
             });
