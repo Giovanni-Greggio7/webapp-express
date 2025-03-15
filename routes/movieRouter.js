@@ -1,5 +1,5 @@
 import express from 'express'
-import { index, show, destroy } from '../controllers/movieController'
+import { index, show, destroy } from '../controllers/movieController.js'
 import movieController from '../controllers/movieController'
 
 const router = express()

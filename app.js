@@ -7,14 +7,19 @@ const app = express()
 const port = process.env.SERVER_PORT || 3000
 
 import movieRouter from './routes/movieRouter.js'
+import imagePathMiddleware from './middlewares/imagePath.js';
 
-app.use( '/movie' , movieRouter)
+app.use( express.static('public') )
 
 app.use(express.json())
+
+app.use( imagePathMiddleware )
 
 app.get( '/', (req, res) => {
     res.send( 'Server Movie tutto a posto')
 })
+
+app.use( '/movie' , movieRouter)
 
 //attivazione del server
 app.listen(port, () => {

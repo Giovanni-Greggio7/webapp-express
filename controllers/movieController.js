@@ -9,6 +9,13 @@ function index(req, res) {
                 error: 'Errore lato server INDEX function'
             })
             res.json(results)
+
+            const movies = results.map((book) => { 👈
+              return {
+                ...movie,
+                image: req.imagePath + book.image,
+              };
+            });
     })
 }
 
@@ -39,6 +46,12 @@ function show(req, res) {
                 });
         
               movie.reviews = reviewsResults;
+
+              res.json({ 
+                ...movie,
+                image: req.imagePath + movie.image,
+              });
+
               res.json(movie);
             });
     });
