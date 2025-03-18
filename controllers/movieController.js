@@ -1,79 +1,88 @@
-import connection from "../data/movie_db.js";
+import connection from "../data/movie_db.js"; // Importa la connessione al database
 
+// Funzione per ottenere tutti i film
 function index(req, res) {
-    const sql = 'SELECT * FROM movies';
+    const sql = 'SELECT * FROM movies'; // Query SQL per selezionare tutti i film
 
-    connection.query(sql, (err, results) => {
-        if (err)
-            return res.status(500).json({
+    connection.query(sql, (err, results) => { // Esegue la query al database
+        if (err) // Se c'è un errore nella query
+            return res.status(500).json({ // Risponde con un errore 500 (server error)
                 error: 'Errore lato server INDEX function'
-            })
-            res.json(results)
-
-            // const movies = results.map((book) => {
-            //   return {
-            //     ...movie,
-            //     image: req.imagePath + book.image,
-            //   };
             });
-    }
 
+        // res.json(results); // Restituisce i risultati della query come risposta JSON
 
+        // Codice commentato che potrebbe essere usato per aggiungere il percorso immagine ai film
+        const movies = results.map((movie) => {
+          return {
+            ...movie,
+            image: req.imagePath + movie.image,
+          };
+        });
+
+        res.json(movies)
+    });
+}
+
+// Funzione per ottenere un singolo film con le sue recensioni
 function show(req, res) {
-    const { id } = req.params;
+    const { id } = req.params; // Estrae l'ID del film dai parametri della richiesta
 
-    const movieSql = 'SELECT * FROM movies WHERE id= ?'
+    const movieSql = 'SELECT * FROM movies WHERE id= ?'; // Query per ottenere il film specifico
+    const reviewsSql = 'SELECT * FROM reviews WHERE movie_id= ?'; // Query per ottenere le recensioni del film
 
-    const reviewsSql = 'SELECT * FROM reviews WHERE movie_id= ?'
-
-    connection.query(movieSql, [id], (err, results) => {
-        if (err)
+    connection.query(movieSql, [id], (err, results) => { // Esegue la query per ottenere il film
+        if (err) // Se c'è un errore nella query
             return res.status(500).json({
               error: 'Errore lato server SHOW function',
             });
-      
-          if (results.length === 0)
+
+        if (results.length === 0) // Se il film non esiste
             return res.status(404).json({
               error: 'Movie not found',
             });
 
-            const movie = results[0];
+        const movie = results[0]; // Salva il primo (e unico) risultato della query
 
-            connection.query(reviewsSql, [id], (err, reviewsResults) => {
-              if (err)
+        // Esegue la query per ottenere le recensioni del film
+        connection.query(reviewsSql, [id], (err, reviewsResults) => {
+            if (err) // Se c'è un errore nella query
                 return res.status(500).json({
                   error: 'Errore lato server SHOW function',
                 });
-        
-              movie.reviews = reviewsResults;
 
-              // res.json({ 
-              //   ...movie,
-              //   image: req.imagePath + movie.image,
-              // });
+            movie.reviews = reviewsResults; // Aggiunge le recensioni al film
 
-              res.json(movie);
+            // Codice commentato che potrebbe essere usato per aggiungere il percorso immagine al film
+            res.json({ 
+              ...movie,
+              image: req.imagePath + movie.image,
             });
+
+            // res.json(movie); // Restituisce il film con le recensioni in formato JSON
+        });
     });
 }
 
+// Funzione per eliminare un film
 function destroy(req, res) {
-    const { id } = req.params;
+    const { id } = req.params; // Estrae l'ID del film dai parametri della richiesta
   
-    const sql = 'DELETE FROM movies WHERE id = ?';
+    const sql = 'DELETE FROM movies WHERE id = ?'; // Query per eliminare il film con l'ID specificato
   
-    connection.query(sql, [id], (err) => {
-      if (err)
-        return res.status(500).json({
-          error: 'Errore lato server DESTROY function',
-        });
-  
-      res.sendStatus(204);
-    });
-  }
+    connection.query(sql, [id], (err) => { // Esegue la query di eliminazione
+        if (err) // Se c'è un errore nella query
+            return res.status(500).json({
+                error: 'Errore lato server DESTROY function',
+            });
 
+        res.sendStatus(204); // Restituisce un codice 204 (No Content) per indicare che l'eliminazione è avvenuta con successo
+    });
+}
+
+// Esporta le funzioni per essere usate in altri file
 export {
     index,
     show,
     destroy
-}
+};
