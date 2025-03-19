@@ -1,8 +1,10 @@
 // Importazione di Express, il framework per la creazione di API e server web
 import express from 'express';
 
+import upload from '../middlewares/multer.js'
+
 // Importazione delle funzioni controller per gestire le richieste sui film
-import { index, show, destroy, storeReview } from '../controllers/movieController.js';
+import { index, show, destroy, storeReview, store } from '../controllers/movieController.js';
 
 // Creazione di un'istanza di Express per gestire le route
 const router = express.Router();
@@ -16,6 +18,8 @@ router.get('/', index);
 router.get('/:id', show);
 
 router.post('/:id/reviews', storeReview);
+
+router.post( '/', upload.single('image'), store)
 
 // Rotta per eliminare un film tramite il suo ID
 // Esempio di utilizzo: DELETE http://localhost:3000/movies/:id

@@ -87,6 +87,27 @@ function storeReview(req, res) {
     })
 }
 
+function store(req, res){
+
+    const { title, director, genre, release_year, abstract } = req.body
+
+    const imageName = `${req.file.filename}`
+
+    const sql = 'INSERT INTO movies (title, director, image, abstract) VALUES (?,?,?,?)'
+
+    connection.query(sql, [title, director, genre, release_year, imageName, abstract], (err, results) => {
+        if(err) return res.status(500).json({
+            error: 'Database Errore Store'
+        })
+
+        res.status(201).json({
+            status: 'success',
+            message: 'Film inserito con successo',
+            id: results.inserId
+        })
+    }) 
+}
+
 // Funzione per eliminare un film
 function destroy(req, res) {
     const { id } = req.params; // Estrae l'ID del film dai parametri della richiesta
@@ -108,5 +129,6 @@ export {
     index,
     show,
     destroy,
-    storeReview
+    storeReview,
+    store
 };
